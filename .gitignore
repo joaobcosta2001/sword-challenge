@@ -1,0 +1,6 @@
+.env
+event_log.xlsx
+tests/__pycache__/
+tests/.pytest_cache/
+__pycache__/
+.pytest_cache/

@@ -1,0 +1,87 @@
+version: "3.8"
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile  # Dockerfile for your FastAPI app
+    container_name: fastapi-app
+    depends_on:
+      - rabbitmq
+      - postgres
+      - redis
+    env_file:
+      - .env
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+      - JWT_SECRET=2fcbb2c75b74b4f9276065ceddb0b0cd4c173d2c2401a1ad36f78b1a8916d5b449bbc6326b5b1e3ef32a1a2e2422cc1abfa856c7e15ab42706efeeb89f2accd0
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+  background-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.bg-worker  # Dockerfile for your background worker
+    container_name: background-worker
+    volumes:
+    - ./data:/app/data
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"  # RabbitMQ message broker port
+      - "15672:15672"  # RabbitMQ management UI
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=secret_admin123
+      - POSTGRES_PASSWORD=verynotsecurepassword
+      - POSTGRES_DB=main_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app-network
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"  # Redis default port
+    networks:
+      - app-network
+  #test-runner:
+  #  build:
+  #    context: .
+  #    dockerfile: Dockerfile.test
+  #  container_name: test-runner
+  #  depends_on:
+  #    - postgres
+  #    - rabbitmq
+  #    - redis
+  #  networks:
+  #    - app-network
+  #  environment:
+  #    - JWT_SECRET=your_jwt_secret
+  #    - DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
+  #    - RABBITMQ_HOST=rabbitmq
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
