@@ -3,10 +3,12 @@
 import { cookies } from "next/headers"
 import jwt from "jsonwebtoken";
 
+const backendUrl = process.env.BACKEND_URL || "http://localhost:8000"
+
 // Authenticate the user and store the JWT token in a cookie
 export async function authenticate(username: string, password: string): Promise<boolean> {
   // Send login request to the server
-  const response = await fetch("http://localhost:8000/login", {
+  const response = await fetch(backendUrl + "/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

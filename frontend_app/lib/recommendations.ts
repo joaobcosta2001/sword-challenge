@@ -1,12 +1,15 @@
 import { getToken } from "./auth";
 import { PatientData, Recommendation } from "./types";
 
+const backendUrl = process.env.BACKEND_URL || "http://localhost:8000"
+
+
 export async function generateRecommendation(patient_data:PatientData): Promise<Recommendation | null> {
   // Send login request to the server
 
   const token = await getToken()
 
-  const response = await fetch("http://localhost:8000/evaluate", {
+  const response = await fetch(backendUrl + "/evaluate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -33,7 +36,7 @@ export async function getRecommendation(id:string): Promise<Recommendation|null>
   
   const token = await getToken()
   try{
-    const response = await fetch("http://localhost:8000/recommendation/"+id, {
+    const response = await fetch(backendUrl + "/recommendation/"+id, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
