@@ -100,17 +100,13 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """
     Verifies the validity of the JWT token provided in the Authorization header.
     """
-    print(f"Received token: {credentials.credentials}")  # Debugging line
     token = credentials.credentials
     try:
         payload = jwt.decode(token, os.getenv("JWT_SECRET"), algorithms=["HS256"])
-        print(f"Decoded JWT payload: {payload}")  # Debugging line
         return payload  # Return the decoded payload if the token is valid
     except jwt.ExpiredSignatureError:
-        print("Token has expired")  # Debugging line
         raise HTTPException(status_code=401, detail="Token has expired")
     except jwt.InvalidTokenError:
-        print("Invalid token")
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
@@ -231,19 +227,14 @@ async def evaluate_patient(payload: dict, token: dict = Depends(verify_token)):
     # Extract the 'patient_data' property from the payload
     patient_data = payload.get("patient_data")
 
-    print("Received payload:", payload)  # Debugging line
-    print("Extracted patient_data:", patient_data)  # Debugging line	
-
 
     if not patient_data:
-        print("Missing 'patient_data' in the request body")
         raise HTTPException(status_code=400, detail="Missing 'patient_data' in the request body")
 
     # Validate the extracted data against the PatientData model
     try:
         data = PatientData(**patient_data)
     except Exception as e:
-        print(f"Error validating patient_data: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Invalid 'patient_data': {str(e)}")
     
     bmi = data.weight/((data.height/100.0) ** 2)
