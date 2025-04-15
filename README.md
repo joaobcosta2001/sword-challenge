@@ -30,6 +30,9 @@ This project is a **Clinical Recommendation API** that provides endpoints for ev
 - Redis
 
 ## Setup
+
+All the following commands are specified for windows environments
+
 1. Clone the Repository:
     - git clone [https://github.com/joaobcosta2001/sword-challenge.git](https://github.com/joaobcosta2001/sword-challenge.git)
     - cd sword-challenge
@@ -43,6 +46,7 @@ This project is a **Clinical Recommendation API** that provides endpoints for ev
 4. Start the frontend app:
     - On a separate terminal execute:
         - cd frontend_app
+        - npm install
         - npm run dev
     - Open your browser and access [http://localhost:3000/](http://localhost:3000/)
 
@@ -111,20 +115,22 @@ All endpoints are documented in the [OpenAPI Reference file](openapi.json)
 ## Frontend
 The frontend application is located in the frontend directory. Even though it was not a requirement, it helps on testing the application
 
-1. Clone the Repository:
-    - git clone <repository-url>
-    - cd <repository-folder>
+1. Clone the Repository
 2. Set Up Environment Variables:
-    - Create a .env file in the root directory with the following variables:
+    - Create a .env file in the project's root directory (not frontend_app) with the following variables:
         - OPENAI_API_KEY=<your_openai_api_key> (optional)
         - JWT_SECRET=<your_jwt_secret>
+3. Run the frontend app:
+    - cd frontend_app
+    - npm run dev
+4. Build and Start Services as before
+    - docker_compose up --build
 
-3. Build and Start Services:
-    - Use Docker Compose to build and start the services:
-        - docker-compose up --build
 
 ## Background Worker
 The background-worker.py processes messages from RabbitMQ and logs them to an excel file inside the data directory for later analytics
 
 ## Testing
-Even though some automatic testing is implemented, it is not properly working and due to time constraints it was not fixed. As such, manual testing was extensively conducted
+To test the API, ensure the docker containers are running and run:
+- cd tests
+- python tests.py
