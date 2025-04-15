@@ -42,7 +42,7 @@ This project is a **Clinical Recommendation API** that provides endpoints for ev
         - docker-compose up --build
 4. Start the frontend app:
     - On a separate terminal execute:
-        - cd frontend
+        - cd frontend_app
         - npm run dev
     - Open your browser and access [http://localhost:3000/](http://localhost:3000/)
 
